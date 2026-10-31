@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Taller 3.2.4 · Residuos peligrosos y no peligrosos</title>
+<style>
+:root{--p:#0f5c5c;--p2:#e0efee;--a:#f2b705;--i:#14302b;--bg:#edf2f0;--m:#4d6560}
+*{box-sizing:border-box}
+body{margin:0;font:17px/1.55 system-ui,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--i)}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.25;margin:.4em 0}
+h1{font-size:1.8em}h2{font-size:1.25em}
+header{background:var(--p);color:#fff;padding:12px 16px}
+header div{max-width:820px;margin:0 auto}
+header b{font-family:Georgia,serif;font-size:1.05em}
+.bar{height:10px;background:#ffffff40;border-radius:9px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:var(--a);transition:width .3s}
+.wrap{max-width:820px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid #cfdcd8;border-radius:12px;padding:22px;margin-bottom:14px}
+.tag{display:inline-block;background:var(--p2);color:var(--p);border-radius:6px;padding:3px 10px;font-size:14px;font-weight:700}
+.sc{border-left:6px solid var(--a);background:#f7faf9;padding:10px 14px;margin:12px 0;border-radius:0 8px 8px 0}
+.sc p{margin:.2em 0}
+.opt{display:block;width:100%;text-align:left;min-height:48px;padding:12px 14px;margin:8px 0;border:2px solid #b9cbc6;background:#fff;border-radius:8px;font:inherit;color:inherit;cursor:pointer}
+.opt:hover{border-color:var(--p)}
+.opt[aria-pressed=true]{border-color:var(--p);background:var(--p2);font-weight:700}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row .opt{flex:1 1 160px;margin:4px 0;text-align:center}
+.cl{border-top:1px solid #dbe5e2;padding-top:8px;margin-top:10px}
+.btn{min-height:48px;padding:10px 22px;border:0;border-radius:8px;background:var(--p);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.btn.s{background:#fff;color:var(--p);border:2px solid var(--p)}
+.btn:focus-visible,.opt:focus-visible,textarea:focus-visible{outline:3px solid var(--a);outline-offset:2px}
+.nav{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:14px}
+.fb{background:#fff8dc;border:1px solid #e3cc72;border-radius:8px;padding:10px 14px;margin:8px 0;font-size:16px}
+.msg{color:#9b1c1c;font-weight:700;flex:1 1 200px;text-align:center}
+textarea{width:100%;min-height:90px;font:inherit;padding:10px;border:2px solid #b9cbc6;border-radius:8px;margin:4px 0 8px}
+label{font-weight:600;display:block;margin-top:8px}
+.hint{color:var(--m);font-size:15px;margin:2px 0 6px}
+.bin{display:inline-block;padding:4px 10px;border-radius:6px;margin:3px;font-size:14px;font-weight:700;border:2px solid #222}
+.bw{background:#fff}.bv{background:#2e7d4f;color:#fff}.bn{background:#222;color:#fff}
+.res h3{margin-top:1.1em;color:var(--p)}.res ul{margin:.3em 0;padding-left:1.2em}
+blockquote{margin:.4em 0;padding:8px 12px;border-left:4px solid var(--p);background:#f3f8f7;border-radius:0 8px 8px 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.chips span{background:var(--p2);border-radius:8px;padding:6px 10px;font-size:15px}
+.stats{display:flex;gap:10px;flex-wrap:wrap}.stats div{flex:1 1 150px;background:var(--p2);border-radius:8px;padding:10px;text-align:center}
+.stats b{font-size:1.6em;display:block;font-family:Georgia,serif}
+@media(max-width:520px){body{font-size:16px}.card{padding:14px}h1{font-size:1.5em}}
+@media(prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style></head><body>
+<header><div><b>♻ Manejo integral de residuos sólidos · Programa 66330105</b><div class="bar" aria-hidden="true"><i id="pb" style="width:0"></i></div><small id="pt">Taller 3.2.4</small></div></header>
+<main class="wrap" id="app"></main>
+<script>
+const M=['¿Todos los residuos son iguales?','Diferenciemos los residuos peligrosos y no peligrosos','Los residuos en nuestro entorno de trabajo','¿Qué riesgos podemos encontrar?','¿Qué harías frente a estas situaciones?'];
+const L=['Reconocer','Diferenciar','Identificar en contexto','Relacionar riesgos','Analizar casos'];
+const BINS='<p class="hint">Código nacional de colores para residuos ordinarios (Resolución 2184 de 2019):</p><span class="bin bw">Blanco: aprovechables</span><span class="bin bv">Verde: orgánicos aprovechables</span><span class="bin bn">Negro: no aprovechables</span>';
+const PNI=[['P','⚠ Puede ser peligroso'],['N','✔ No peligroso'],['I','❓ Falta información']];
+/* Opciones: [texto, adecuada(1/0), retroalimentación]. Clasificación: [texto, categoría, retro] */
+const S=[
+{m:0,y:'mu',r:'res',q:'Observa estos residuos. ¿Cuáles podrían requerir un manejo diferenciado, según lo que sabes hoy?',o:[['📰 Papel y cartón limpios y secos',0,'Por lo general no presentan características de peligrosidad; suelen ser aprovechables si se mantienen limpios y secos.'],['🍎 Restos de alimentos',0,'Son orgánicos y, por sí solos, no se consideran peligrosos; sí requieren manejo para evitar malos olores y plagas.'],['🔋 Pilas y baterías usadas',1,'Contienen metales y sustancias que pueden afectar la salud y el ambiente; suelen requerir manejo diferenciado.'],['🛢️ Aceites usados',1,'Pueden contaminar suelo y agua; se manejan de forma diferenciada.'],['🥫 Envases que contuvieron productos químicos',1,'Depende de qué contenían y de si conservan restos: no todos se clasifican igual, pero conviene revisarlos antes de mezclarlos.'],['💡 Lámparas y aparatos eléctricos o electrónicos',1,'Pueden contener componentes que requieren manejo diferenciado.'],['💉 Elementos cortopunzantes con posible contaminación biológica',1,'Combinan riesgo de corte con posible riesgo infeccioso.'],['🧱 Escombros de una adecuación',0,'No se clasifican automáticamente como peligrosos: depende de si están contaminados con otras sustancias, y tienen disposiciones específicas.'],['🥛 Vidrio limpio',0,'No presenta peligrosidad química, aunque puede cortar y exige precaución.']]},
+{m:0,y:'one',r:'dif',q:'¿Qué afirmación te parece más acertada?',o:[['Dos residuos del mismo tipo pueden clasificarse distinto según su contenido o su contaminación.',1,'Así es: por eso no se clasifica solo por el tipo de objeto.'],['Todo residuo de una obra o de un cementerio es peligroso.',0,'No: cada residuo debe evaluarse. Muchos son ordinarios o escombros no contaminados.'],['Con ver el lugar donde se genera basta para clasificarlo.',0,'El lugar da pistas, pero no determina la clasificación: importan composición, estado y contaminación.'],['Todo lo que viene en envase plástico es aprovechable.',0,'Depende del material y de su estado; un envase con restos de producto puede requerir revisión.']]},
+{m:1,y:'in',q:'Peligroso y no peligroso: ideas clave',h:'<div class="sc"><b>♻ Residuo no peligroso</b><p>Por su composición y estado, no presenta características de peligrosidad. Puede ser aprovechable o no aprovechable.</p></div><div class="sc"><b>⚠ Residuo peligroso</b><p>Por alguna de sus características puede causar daños a la salud humana o al ambiente.</p></div><p><b>Características que pueden conferir peligrosidad:</b></p><div class="chips"><span>🧪 Corrosividad</span><span>⚗️ Reactividad</span><span>💥 Explosividad</span><span>☠️ Toxicidad</span><span>🔥 Inflamabilidad</span><span>🦠 Infecciosidad</span><span>☢️ Radiactividad</span></div><div class="fb">🔎 <b>Ojo:</b> el lugar donde se genera no basta para clasificar un residuo. Un mismo tipo de objeto puede ser peligroso o no según su contenido, su contaminación y la normativa aplicable.</div><p class="hint">Referencias: Decreto 1076 de 2015 (gestión de residuos peligrosos), Decreto 1077 de 2015 (servicio público de aseo) y Resolución 2184 de 2019 (separación en la fuente).</p>'+BINS+'<p class="hint">Estos colores aplican a residuos ordinarios no peligrosos. Los residuos peligrosos requieren identificación y manejo diferenciado según su normativa; no usan este código, y que un residuo no sea aprovechable no significa que sea peligroso.</p>'},
+{m:1,y:'cl',r:'res',k:PNI,q:'Clasifica cada residuo. Si la información no alcanza, elige “Falta información”.',o:[['🔋 Batería de plomo-ácido usada','P','Contiene sustancias corrosivas y tóxicas: se maneja como residuo peligroso.'],['📦 Cartón limpio y seco de empaques','N','No presenta características de peligrosidad; es aprovechable (recipiente blanco).'],['🍎 Restos de comida de un restaurante','N','No es peligroso; es orgánico aprovechable (recipiente verde).'],['🧱 Escombros de ladrillo y concreto de una adecuación','N','Si no están contaminados, no son peligrosos; tienen disposiciones específicas para residuos de construcción y demolición.'],['🎨 Envase de pintura sin información sobre su contenido','I','Depende del producto y de si conserva restos: falta información (etiqueta o ficha de seguridad).'],['💡 Lámpara fluorescente agotada','P','Contiene componentes que requieren manejo diferenciado; suele gestionarse por programas posconsumo.'],['💉 Jeringa usada encontrada en un área de trabajo','P','Debe tratarse como potencialmente infecciosa y cortopunzante; no se manipula sin protección.'],['🥛 Fragmentos de vidrio limpio','N','No es peligroso por su composición, pero corta: requiere precaución.']]},
+{m:1,y:'one',r:'dif',q:'Un residuo va en el recipiente negro porque no es aprovechable. ¿Significa que es peligroso?',o:[['No: “no aprovechable” y “peligroso” son criterios distintos.',1,'Correcto: la Resolución 2184 organiza residuos ordinarios; la peligrosidad depende de sus características.'],['Sí, todo lo que va en negro es peligroso.',0,'No: el recipiente negro es para residuos ordinarios no aprovechables.'],['Los peligrosos tienen un color de recipiente propio fijado por esa resolución.',0,'Esa resolución no establece un color único para residuos peligrosos; estos requieren identificación y manejo diferenciado.']]},
+{m:2,y:'in',q:'Antes de empezar: una nota importante',h:'<div class="sc"><b>🏗️ Proyecto de adecuación y mantenimiento de osarios</b><p>En esta actividad se generan residuos de obra, empaques y residuos de las jornadas. Estos no son los únicos entornos: también veremos viviendas, comercios y limpieza.</p></div><div class="fb">🔎 <b>Importante:</b> los restos humanos u óseos no son residuos ordinarios ni se clasifican en este taller. Su manejo corresponde a disposiciones y protocolos específicos y al personal designado en el proyecto. Tampoco todo lo que se genera en un osario es peligroso: cada residuo debe evaluarse.</div>'},
+{m:2,y:'cl',r:'ent',k:PNI,q:'Clasifica estos residuos de distintos entornos. Si falta información, indícalo.',o:[['🧱 Fragmentos de ladrillo y mortero al adecuar un muro','N','Si no están mezclados con otras sustancias, son escombros no peligrosos con disposiciones propias.'],['🎨 Empaque de pintura con sobrante y sin ficha','I','Hay que conocer el producto (etiqueta o ficha de seguridad) antes de clasificarlo.'],['🧴 Envase de adhesivo con restos de producto','I','Depende del producto y de lo que conserve: falta información.'],['📦 Cajas de cartón y plástico de empaques','N','No peligrosos; aprovechables si están limpios y secos.'],['🥪 Restos del almuerzo de la jornada','N','Residuos ordinarios; los restos de alimentos son orgánicos aprovechables.'],['🧤 Trapos con aceite o solvente usados en mantenimiento','I','Si están impregnados con sustancias peligrosas pueden serlo: depende del producto.'],['🏠 Pilas agotadas de un control remoto (vivienda)','P','Se gestionan por programas posconsumo; no van con los ordinarios.'],['🧽 Envase de desinfectante con sobrante (limpieza)','I','Depende de la composición del producto: falta información.']]},
+{m:2,y:'tx',r:'dif',q:'Piensa en un envase de pintura o adhesivo sobrante de un mantenimiento. ¿Qué información necesitarías para saber cómo clasificarlo?',f:['Mi respuesta'],h:'Piensa: ¿qué dice la etiqueta? ¿Contiene producto? ¿Quién podría orientarte?'},
+{m:3,y:'cl',r:'rie',k:[['c','✂ Cortes o pinchazos'],['r','🔥 Reacción o incendio'],['q','🧪 Exposición a sustancias'],['b','🦠 Riesgo sanitario']],q:'Asocia cada situación con el riesgo principal que podría presentarse.',o:[['Recoger vidrios y metales con las manos descubiertas','c','El contacto directo con bordes filosos puede causar cortes.'],['Verter en un mismo balde sobrantes de productos químicos distintos','r','Mezclar productos incompatibles puede generar reacciones, vapores o fuego.'],['Guardar frascos sin etiqueta con líquidos desconocidos','q','Sin identificación no se sabe qué contienen ni cómo protegerse.'],['Dejar una gasa con sangre junto a residuos ordinarios','b','Puede exponer a otras personas a agentes infecciosos.'],['Barrer escombros con mucho polvo sin protección','q','El polvo puede afectar vías respiratorias y ojos.']]},
+{m:3,y:'one',r:'rie',sc:['🧴 Mezcla desconocida|Se mezclan en un balde sobrantes de dos productos de limpieza sin saber qué contienen.'],q:'¿Qué consecuencia podría presentarse?',o:[['Podrían generarse vapores o una reacción que afecte a quienes están cerca.',1,'Es una consecuencia posible: por eso importa prevenir mezclas sin información.'],['Solo habría pérdida de producto, sin riesgo para las personas.',0,'No se puede asegurar: algunas mezclas desprenden gases o reaccionan.'],['No pasa nada si el balde está tapado.',0,'Tapar no elimina la reacción ni el riesgo al abrirlo.']]},
+{m:4,y:'mu',r:'imp',sc:['🧪 Recipiente sin identificar|En un depósito hay un recipiente con un líquido y sin etiqueta.'],q:'¿Qué alternativas serían razonables? Puedes elegir varias.',o:[['Apartarlo sin destaparlo ni mezclarlo con otros.',1,'Evita derrames y reacciones.'],['Avisar a quien coordina para identificar su contenido.',1,'Sin información no se puede clasificar; conviene apoyo de quien conoce el producto.'],['Señalizar el sitio para que otros no lo manipulen.',1,'Previene que alguien lo use por error.'],['Olerlo para identificar qué es.',0,'Puede causar intoxicación; los olores no bastan para identificar una sustancia.'],['Verterlo al desagüe.',0,'Puede contaminar el agua y generar reacciones.']]},
+{m:4,y:'mu',r:'imp',sc:['♻ Mezcla de residuos|Cartón, botellas y restos de comida se encuentran mezclados en una misma bolsa.'],q:'¿Qué consideraciones serían razonables? Puedes elegir varias.',o:[['Revisar si el cartón y las botellas siguen limpios y secos.',1,'El estado del material influye en su aprovechamiento.'],['Consultar los acuerdos de separación del lugar (blanco, verde y negro).',1,'La Resolución 2184 orienta la separación de residuos ordinarios.'],['Separar con guantes si hay material sucio o cortante.',1,'Protege a quien manipula.'],['Dejar todo mezclado porque ya se contaminó.',0,'No necesariamente: depende del estado de cada material.']]},
+{m:4,y:'one',r:'imp',sc:['🧪 Residuo dudoso|Un envase hinchado y con olor fuerte aparece en un área de mantenimiento; no se sabe qué contiene.'],q:'¿Qué sería lo más adecuado?',o:[['Tratarlo como posible residuo peligroso hasta contar con información o apoyo especializado.',1,'Sin información, la precaución es lo razonable.'],['Mezclarlo con los ordinarios para que salga rápido.',0,'Podría exponer a otras personas y mezclar con materiales incompatibles.'],['Abrirlo para ver qué tiene.',0,'Podría liberar gases o sustancias nocivas.']]},
+{m:4,y:'mu',r:'imp',sc:['🧱 Escombros de mantenimiento|Tras reparar un muro quedan fragmentos de ladrillo, mortero y empaques de pintura.'],q:'¿Qué alternativas serían razonables? Puedes elegir varias.',o:[['Verificar si los escombros están mezclados con pinturas, adhesivos u otros residuos.',1,'La contaminación influye en la clasificación.'],['Mantenerlos separados de los ordinarios en un sitio definido.',1,'Evita mezclas y facilita su manejo.'],['Preguntar cómo se manejan los residuos de construcción y demolición, que tienen disposiciones propias.',1,'Hay reglas específicas.'],['Clasificarlos como peligrosos automáticamente.',0,'Los escombros limpios no son peligrosos por defecto.']]},
+{m:4,y:'mu',r:'imp',sc:['💉 Cortopunzante|Se encuentra una aguja en un área de trabajo.'],q:'¿Qué alternativas serían razonables? Puedes elegir varias.',o:[['No tocarla directamente.',1,'Puede cortar y estar contaminada.'],['Avisar a la persona responsable.',1,'Su manejo requiere indicaciones y protección adecuadas.'],['Señalizar o delimitar la zona.',1,'Evita accidentes.'],['Guardarla en el bolsillo para entregarla después.',0,'Aumenta el riesgo de pinchazo.'],['Botarla en la bolsa de ordinarios.',0,'Expone a quien recoge esa bolsa.']]},
+{m:4,y:'tx',r:'ref',fr:['ref','ent','imp'],q:'Cierre reflexivo: responde con tus palabras.',f:['¿Qué aprendizaje te llevas de este taller?','¿Qué situaciones de tu entorno requieren especial atención?','¿Por qué es importante separar y manejar adecuadamente los residuos?'],h:'Completa al menos una respuesta. Piensa en tu jornada, tu vivienda o tu comunidad.'}
+];
+const $=q=>document.querySelector(q),E=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const shuf=a=>{a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a};
+let i=-1,A={},SH={},msg='';
+const ans=k=>A[k]=A[k]||{sel:[],t:[],c:{},rev:0};
+/* Orden aleatorio por paso: se sortea al primer renderizado y se conserva al reseleccionar, para que las opciones no salten */
+const ord=k=>SH[k]=SH[k]||shuf(S[k].o.map((_,n)=>n));
+function pick(n){const s=S[i],a=ans(i),p=a.sel.indexOf(n);a.rev=0;
+ if(s.y==='one')a.sel=[n];else if(p>=0)a.sel.splice(p,1);
+ else if(s.max&&a.sel.length>=s.max){msg='Puedes elegir '+s.max+'. Quita una selección para cambiarla.';return render()}
+ else a.sel.push(n);msg='';render()}
+function mark(n,v){const a=ans(i);a.c[n]=v;a.rev=0;msg='';render()}
+function setT(n,v){ans(i).t[n]=v;upd()}
+function chk(k,nj){const s=S[k],a=ans(k),m=s.min||1;
+ if(s.y==='in')return a.seen?'':'seen';
+ if(s.y==='one'&&a.sel.length!==1)return'Elige una opción.';
+ if(s.y==='mu'&&a.sel.length<m)return m>1?'Elige '+m+' opciones.':'Elige al menos una opción.';
+ if(s.y==='cl'&&!s.o.every((_,n)=>a.c[n]))return'Clasifica todos los elementos.';
+ if(s.y==='tx'&&!a.t.some(x=>(x||'').trim().length>2))return'Escribe tu respuesta para continuar.';
+ if(s.j&&!nj&&(a.t[0]||'').trim().length<3)return'Escribe una justificación breve para continuar.';
+ return''}
+function upd(){const c=S.filter((_,k)=>!chk(k)).length,p=Math.round(c/S.length*100);$('#pb').style.width=p+'%';
+ $('#pt').textContent=i<0?'Taller 3.2.4 · Contextualización':i>=S.length?'Resumen · Progreso '+p+' %':'Paso '+(i+1)+' de '+S.length+' · Módulo '+(S[i].m+1)+' de 5 · Progreso '+p+' %'}
+function rv(){const e=chk(i,1);if(e){msg=e;return render()}ans(i).rev=1;msg='';render()}
+function next(){if(S[i].y==='in')ans(i).seen=1;const e=chk(i);if(e){msg=e;return render()}msg='';i++;render();scrollTo(0,0)}
+function prev(){msg='';i--;render();scrollTo(0,0)}
+function reset(){i=-1;A={};SH={};msg='';render();scrollTo(0,0)}
+function render(){const app=$('#app');upd();
+ if(i<0){
+  app.innerHTML=`<section class="card"><span class="tag">Actividad 3.2.4 · Contextualización</span><h1>Residuos peligrosos y no peligrosos en distintos entornos</h1><p>Recorrerás 5 módulos para reconocer, diferenciar y relacionar residuos que se generan en proyectos de adecuación y mantenimiento (incluido el de osarios), viviendas, comercios e instituciones.</p><ul><li>No es un examen: pulsa <b>Revisar respuesta</b> para ver comentarios y puedes corregir antes de continuar.</li><li>A veces la respuesta es “falta información”: es parte del aprendizaje.</li><li>Tus respuestas se conservan al ir atrás y se resumen al final. No se piden datos personales.</li></ul><button class="btn" onclick="i=0;render()">Comenzar el taller</button></section>`;return}
+ if(i>=S.length)return results();
+ const s=S[i],a=ans(i);
+ let b=`<section class="card"><span class="tag">Módulo ${s.m+1} · ${L[s.m]}</span><h3>${M[s.m]}</h3>`;
+ (s.sc||[]).forEach(x=>{const p=x.split('|');b+=`<div class="sc"><b>${p[0]}</b><p>${p[1]}</p></div>`});
+ if(s.b)b+=BINS;
+ b+=`<h2>${s.q}</h2>`;
+ if(s.max)b+=`<p class="hint">Debes elegir ${s.max} opciones.</p>`;
+ if(s.y==='in')b+=s.h;
+ else if(s.y==='one'||s.y==='mu')ord(i).forEach(n=>{const on=a.sel.includes(n);b+=`<button class="opt" aria-pressed="${on}" onclick="pick(${n})">${on?'☑':'☐'} ${s.o[n][0]}</button>`});
+ else if(s.y==='cl')ord(i).forEach(n=>{const c=a.c[n];b+=`<div class="cl"><p>${s.o[n][0]}</p><div class="row">${s.k.map(q=>`<button class="opt" aria-pressed="${c===q[0]}" onclick="mark(${n},'${q[0]}')">${c===q[0]?'●':'○'} ${q[1]}</button>`).join('')}</div></div>`});
+ else s.f.forEach((f,k)=>{b+=`<label for="t${k}">${f}</label><textarea id="t${k}" oninput="setT(${k},this.value)">${E(a.t[k]||'')}</textarea>`});
+ if(s.j)b+=`<label for="t0">Justifica brevemente tu elección</label><textarea id="t0" oninput="setT(0,this.value)">${E(a.t[0]||'')}</textarea>`;
+ if(s.y==='in'){}else if(s.y==='tx')b+=`<p class="hint">${s.h}</p>`;
+ else{b+=`<div class="row"><button class="btn s" onclick="rv()">Revisar respuesta</button></div>`;
+  if(a.rev){
+   if(s.y==='cl')ord(i).forEach(n=>{const o=s.o[n],g=a.c[n]===o[1];b+=`<div class="fb">${g?'✔':'↔'} <b>${o[0]}</b><br>${g?'Clasificación adecuada. ':'Requiere revisión: '}${o[2]}</div>`});
+   else a.sel.forEach(n=>{const o=s.o[n];b+=`<div class="fb">${o[1]?'💡 <b>Alternativa adecuada.</b>':'🔎 <b>Requiere revisión.</b>'} ${o[2]}</div>`});
+   b+='<p class="hint">Puedes cambiar tu selección y volver a revisarla, o continuar.</p>'}}
+ b+=`<div class="nav"><button class="btn s" onclick="prev()">← ${i===0?'Inicio':'Anterior'}</button><span class="msg" role="alert">${msg}</span><button class="btn" onclick="next()">${i===S.length-1?'Ver mi resumen':'Continuar →'}</button></div></section>`;
+ app.innerHTML=b}
+function results(){
+ const R={},sc=new Set();['res','dif','rie','ent','imp','ref'].forEach(k=>R[k]={s:[],w:[]});
+ S.forEach((s,k)=>{if(s.y==='in'||chk(k))return;const a=A[k];(s.sc||[]).forEach(x=>sc.add(x.split('|')[0]));
+  if(s.y==='cl')s.o.forEach((o,n)=>R[s.r].s.push(E(o[0])+' → <b>'+s.k.find(q=>q[0]===a.c[n])[1]+'</b>'));
+  else if(s.y!=='tx')a.sel.forEach(n=>R[s.r].s.push(E(s.o[n][0])));
+  else a.t.forEach((x,n)=>{if((x||'').trim())R[s.fr?s.fr[n]:s.r].w.push((s.f.length>1?'<b>'+s.f[n]+'</b><br>':'')+E(x.trim()).replace(/\n/g,'<br>'))})});
+ const T=[['res','1. Residuos que logré identificar'],['dif','2. Diferencias que reconocí entre residuos peligrosos y no peligrosos'],['rie','3. Riesgos que aprendí a reconocer'],['ent','4. Situaciones de mi entorno que requieren especial atención'],['imp','5. Importancia de una adecuada separación y manejo de los residuos'],['ref','6. Mi reflexión final']],done=S.filter((_,k)=>!chk(k)).length;
+ let h=`<section class="card res"><span class="tag">Actividad 3.2.4 · Contextualización</span><h1>Taller: residuos peligrosos y no peligrosos</h1><div class="stats"><div><b>${sc.size}</b>situaciones ilustradas</div><div><b>${done}/${S.length}</b>actividades completadas</div><div><b>${Math.round(done/S.length*100)} %</b>de progreso</div></div><p class="hint">Este resumen recoge tus selecciones y lo que escribiste. La clasificación de un residuo real depende de su composición, su estado y la normativa aplicable.</p>`;
+ T.forEach(t=>{const r=R[t[0]];if(!r.s.length&&!r.w.length)return;h+=`<h3>${t[1]}</h3>`;
+  if(r.s.length)h+=`<p class="hint">Opciones que seleccioné</p><ul>${r.s.map(x=>'<li>'+x+'</li>').join('')}</ul>`;
+  if(r.w.length)h+=`<p class="hint">Lo que escribí</p>`+r.w.map(x=>'<blockquote>'+x+'</blockquote>').join('')});
+ h+=`<div class="fb">Reconocer las características de un residuo, identificar la información que falta y prevenir mezclas o contactos riesgosos es el primer paso para manejarlos de forma segura. En las siguientes actividades pondrás en práctica estos conocimientos.</div><div class="nav"><button class="btn s" onclick="i=0;render();scrollTo(0,0)">Revisar mis respuestas</button><button class="btn" onclick="reset()">Reiniciar el taller</button></div></section>`;
+ $('#app').innerHTML=h}
+render();
+</script></body></html>

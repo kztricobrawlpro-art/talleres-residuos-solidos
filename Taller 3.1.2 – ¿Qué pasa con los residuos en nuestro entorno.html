@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Taller 3.1.2 · Situaciones cotidianas con residuos sólidos</title>
+<style>
+:root{--p:#0f5c5c;--p2:#e0efee;--a:#f2b705;--i:#14302b;--bg:#edf2f0;--m:#4d6560}
+*{box-sizing:border-box}
+body{margin:0;font:17px/1.55 system-ui,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--i)}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.25;margin:.4em 0}
+h1{font-size:1.8em}h2{font-size:1.25em}
+header{background:var(--p);color:#fff;padding:12px 16px}
+header div{max-width:820px;margin:0 auto}
+header b{font-family:Georgia,serif;font-size:1.05em}
+.bar{height:10px;background:#ffffff40;border-radius:9px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:var(--a);transition:width .3s}
+.wrap{max-width:820px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid #cfdcd8;border-radius:12px;padding:22px;margin-bottom:14px}
+.tag{display:inline-block;background:var(--p2);color:var(--p);border-radius:6px;padding:3px 10px;font-size:14px;font-weight:700}
+.sc{border-left:6px solid var(--a);background:#f7faf9;padding:10px 14px;margin:12px 0;border-radius:0 8px 8px 0}
+.sc p{margin:.2em 0}
+.opt{display:block;width:100%;text-align:left;min-height:48px;padding:12px 14px;margin:8px 0;border:2px solid #b9cbc6;background:#fff;border-radius:8px;font:inherit;color:inherit;cursor:pointer}
+.opt:hover{border-color:var(--p)}
+.opt[aria-pressed=true]{border-color:var(--p);background:var(--p2);font-weight:700}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row .opt{flex:1 1 160px;margin:4px 0;text-align:center}
+.cl{border-top:1px solid #dbe5e2;padding-top:8px;margin-top:10px}
+.btn{min-height:48px;padding:10px 22px;border:0;border-radius:8px;background:var(--p);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.btn.s{background:#fff;color:var(--p);border:2px solid var(--p)}
+.btn:focus-visible,.opt:focus-visible,textarea:focus-visible{outline:3px solid var(--a);outline-offset:2px}
+.nav{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:14px}
+.fb{background:#fff8dc;border:1px solid #e3cc72;border-radius:8px;padding:10px 14px;margin:8px 0;font-size:16px}
+.msg{color:#9b1c1c;font-weight:700;flex:1 1 200px;text-align:center}
+textarea{width:100%;min-height:90px;font:inherit;padding:10px;border:2px solid #b9cbc6;border-radius:8px;margin:4px 0 8px}
+label{font-weight:600;display:block;margin-top:8px}
+.hint{color:var(--m);font-size:15px;margin:2px 0 6px}
+.bin{display:inline-block;padding:4px 10px;border-radius:6px;margin:3px;font-size:14px;font-weight:700;border:2px solid #222}
+.bw{background:#fff}.bv{background:#2e7d4f;color:#fff}.bn{background:#222;color:#fff}
+.res h3{margin-top:1.1em;color:var(--p)}.res ul{margin:.3em 0;padding-left:1.2em}
+blockquote{margin:.4em 0;padding:8px 12px;border-left:4px solid var(--p);background:#f3f8f7;border-radius:0 8px 8px 0}
+.stats{display:flex;gap:10px;flex-wrap:wrap}.stats div{flex:1 1 150px;background:var(--p2);border-radius:8px;padding:10px;text-align:center}
+.stats b{font-size:1.6em;display:block;font-family:Georgia,serif}
+@media(max-width:520px){body{font-size:16px}.card{padding:14px}h1{font-size:1.5em}}
+@media(prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style></head><body>
+<header><div><b>♻ Manejo integral de residuos sólidos · Programa 66330105</b><div class="bar" aria-hidden="true"><i id="pb" style="width:0"></i></div><small id="pt">Taller 3.1.2</small></div></header>
+<main class="wrap" id="app"></main>
+<script>
+const M=['¿Qué está pasando aquí?','¿Por qué crees que ocurre?','¿Qué podría pasar después?','¿Qué harías tú?','Situaciones que generan preguntas','Reto integrador: una situación de mi entorno'];
+const L=['Niveles 1–2 · Observar e interpretar','Nivel 3 · Explorar causas','Nivel 4 · Anticipar consecuencias','Nivel 5 · Comparar mejoras','Nivel 5 · Formular preguntas','Nivel 6 · Integrar y justificar'];
+const BINS='<p class="hint">Código nacional de colores (Resolución 2184 de 2019):</p><span class="bin bw">Blanco: aprovechables</span><span class="bin bv">Verde: orgánicos aprovechables</span><span class="bin bn">Negro: no aprovechables</span>';
+const IS=['🥖 Panadería-cafetería en un barrio comercial de Yopal|Cada mañana se generan empaques, cajas de cartón y restos de comida. Hay una sola caneca en la parte trasera y poco espacio. El personal separa el cartón algunos días. El vehículo recolector pasa sin hora fija. Una vecina reclama por los olores y un recuperador de oficio retira cartón y botellas por la tarde.'];
+/* Opciones: [texto, razonable(1/0), retroalimentación]. Clasificación: [texto,'v'|'s',retro] */
+const S=[
+{m:0,y:'one',r:'sit',sc:['🏪 Tienda de barrio|Al cerrar, una persona deja en una sola bolsa cajas de cartón, botellas plásticas, restos de comida y servilletas usadas. Al día siguiente la bolsa sigue junto a la entrada.','🏘️ Conjunto residencial|Hay tres canecas en el cuarto de basuras. Algunos residentes separan sus bolsas; otros las dejan en el piso porque las canecas están llenas.','🧺 Plaza de mercado|Cajas de cartón y cáscaras de verduras se amontonan en un pasillo. Un comerciante cuenta que el vehículo pasa a horas distintas.'],q:'Si solo pudieras analizar una escena, ¿cuál te llama más la atención?',o:[['Tienda de barrio',1,'Te fijaste en la mezcla de materiales y en el tiempo que la bolsa espera. ¿Qué más te hace pensar esta escena?'],['Conjunto residencial',1,'Notaste que hay personas que separan y aun así hay dificultades. ¿Qué crees que influye?'],['Plaza de mercado',1,'Te llamó la atención un espacio compartido por muchas personas. ¿Quiénes tendrían que coordinarse?']]},
+{m:0,y:'cl',r:'obs',sc:['🏪 Tienda de barrio|Al cerrar, una persona deja en una sola bolsa cajas de cartón, botellas plásticas, restos de comida y servilletas usadas. Al día siguiente la bolsa sigue junto a la entrada, antes de que lleguen los vehículos de recolección.'],q:'Para cada afirmación, decide si se observa en la escena o si es algo que se supone.',o:[['Hay materiales distintos reunidos en una misma bolsa.','v','Está descrito directamente en la escena.'],['La bolsa permanece junto a la entrada hasta la recolección.','v','Se menciona de forma explícita.'],['La persona mezcla todo porque no le interesa separar.','s','La escena no dice por qué lo hizo; podrían influir la falta de espacio, de tiempo o de información.'],['El cartón se va a dañar.','s','Es una posibilidad. La escena no informa si hay lluvia o humedad.'],['Los restos de comida están en la misma bolsa que el cartón.','v','Sí se ve en la descripción: comparten bolsa.']]},
+{m:1,y:'mu',r:'cau',sc:['📍 Esquina con bolsas|En una esquina del barrio se acumulan bolsas junto a un poste. Algunos vecinos dicen que el vehículo pasa tarde; otros, que no hay recipientes cerca. Nadie sabe con certeza quién las deja.'],q:'¿Qué explicaciones podrían influir? Elige todas las que te parezcan posibles.',o:[['Los vecinos no tienen claro el horario de paso del vehículo.',1,'Es posible: sin un horario conocido, las bolsas se sacan en cualquier momento.'],['No hay recipientes o puntos de entrega cercanos.',1,'Posible, y algunos vecinos lo mencionan. Faltaría confirmar cuántos hay y dónde.'],['Algunas personas no saben dónde deben dejar sus residuos.',1,'Puede influir. ¿Qué información te ayudaría a comprobarlo?'],['Es costumbre sacar la basura cuando se tiene tiempo, no en un horario fijo.',1,'Los hábitos cotidianos pesan; conversar con los vecinos ayudaría a entenderlos.'],['Todos los vecinos lo hacen por irresponsabilidad.',0,'La escena no da información para afirmarlo. Atribuir motivos sin datos puede dejar por fuera otras causas.'],['La única causa es el servicio de recolección.',0,'Puede influir, pero la escena sugiere varios factores a la vez.']]},
+{m:1,y:'tx',r:'preg',q:'¿Qué información adicional te gustaría tener para entender mejor lo que ocurre en esa esquina?',f:['Escribe tu respuesta'],h:'Piensa: ¿qué datos te permitirían distinguir una causa de otra? ¿A quién le preguntarías?'},
+{m:2,y:'mu',r:'con',sc:['📦 Local comercial|Las cajas de cartón se guardan junto a la puerta trasera, sin techo. Esta semana ha llovido varios días. A pocos metros hay una bolsa con restos de comida.'],q:'¿Qué podría ocurrir si la situación continúa? Elige las consecuencias que te parezcan posibles.',o:[['El cartón podría humedecerse y perder utilidad para su aprovechamiento.',1,'Es una consecuencia posible, aún no comprobada en la escena.'],['Podrían aparecer insectos o roedores por los restos de comida.',1,'Posible; depende de cuánto tiempo permanezcan y de cómo estén guardados.'],['Podría dificultarse el paso del personal por la puerta trasera.',1,'Se relaciona con el espacio, algo que sí se menciona.'],['Ya hay enfermedades en el barrio por esta causa.',0,'Eso sería un hecho comprobado, y la escena no lo informa. Conviene separar lo observado de lo posible.'],['El cartón ya está contaminado con sustancias peligrosas.',0,'No hay datos que lo indiquen; es una suposición.']]},
+{m:2,y:'tx',r:'con',q:'Elige la consecuencia que más te preocupa y explica brevemente por qué.',f:['Mi explicación'],h:'Piensa: ¿es algo que ya se observa o algo que podría ocurrir? ¿A quiénes afectaría?'},
+{m:3,y:'mu',j:1,r:'mej',sc:['🏢 Oficina|En una oficina se mezclan cajas, botellas y restos de alimentos en las mismas canecas.'],q:'¿Qué propondrías explorar para mejorar la situación? Puedes elegir una o varias.',o:[['Conversar con el personal para entender por qué se mezclan los materiales.',1,'Escuchar a quienes generan los residuos ayuda a conocer los motivos antes de decidir.'],['Observar unos días dónde y cuándo se acumulan los residuos.',1,'Observar da datos propios. ¿Qué anotarías?'],['Comprar más recipientes de inmediato.',1,'Puede ayudar, pero aún no se sabe si el problema es la cantidad, la ubicación o la claridad sobre qué va en cada uno.'],['Hablar directamente con quienes mezclan los materiales.',1,'Puede funcionar si la conversación busca escuchar y entender; si solo busca corregir, podría no atender la causa.']]},
+{m:3,y:'one',j:1,r:'mej',b:1,sc:['🏘️ Barrio con recipientes de colores|Algunas familias separan sus materiales aprovechables; otras los mezclan antes del paso del vehículo recolector. En algunas esquinas hay recipientes de colores, pero no todos los vecinos saben para qué sirve cada uno.'],q:'¿Qué consideras más importante conversar con la comunidad?',o:[['Qué dudas tienen sobre lo que va en cada recipiente.',1,'Reconocer dudas permite saber qué información falta.'],['Qué acuerdos facilitarían entregar los residuos en un mismo horario.',1,'Los acuerdos colectivos pueden ayudar; conviene saber qué horarios les sirven.'],['Qué dificultades de espacio o de tiempo tienen en sus viviendas.',1,'Hay decisiones con motivos comprensibles, como la falta de espacio.'],['Quiénes participan en la situación y qué papel cumple cada uno.',1,'Conocer a los actores ayuda a que nadie quede por fuera de la conversación.']]},
+{m:4,y:'one',r:'preg',sc:['🏠 Familia que separa|Una familia separa botellas y cartón en bolsas aparte. Al día siguiente, las bolsas aparecen juntas en la acera y algunas están abiertas.'],q:'¿Qué pregunta te parece más importante resolver antes de proponer una mejora?',o:[['¿Quién o qué mezcló de nuevo las bolsas, y en qué momento?',1,'Ubicar el momento ayuda a distinguir lo que ocurre en casa de lo que ocurre después.'],['¿La familia sabe dónde y cuándo entregar lo que separa?',1,'La falta de información puede desanimar a quien ya separa.'],['¿Qué pasa con las bolsas durante la recolección?',1,'Mira el servicio como parte del problema.'],['¿Qué hacen otras familias del sector?',1,'Comparar experiencias da contexto a la situación.']]},
+{m:4,y:'one',r:'preg',sc:['🧤 Recuperador de oficio|Una persona revisa bolsas en la calle para sacar cartón y plástico. Algunos vecinos la miran con desconfianza; otros le guardan material aparte.'],q:'¿Qué pregunta ayudaría más a comprender esta situación?',o:[['¿Qué dificultades enfrenta al recuperar el material?',1,'Permite comprender su trabajo desde su propia experiencia.'],['¿Por qué algunos vecinos la apoyan y otros no?',1,'Explora distintas percepciones sobre esta actividad.'],['¿Dónde entrega o vende lo que recupera?',1,'Sigue el recorrido del material después de recuperarlo.'],['¿Cómo se relaciona su labor con la recolección del sector?',1,'Conecta dos actividades que ocurren en el mismo lugar.']]},
+{m:5,y:'one',r:'sit',sc:IS,q:'1. ¿Qué está ocurriendo en esta situación?',o:[['Se combinan poco espacio, restos de comida y horarios de recolección inciertos.',1,'Reúne varios elementos que sí aparecen en la escena.'],['Hay desacuerdo entre vecinos y negocio sobre olores y materiales.',1,'Se ve una tensión entre actores. ¿Qué diría cada uno?'],['El único problema es que el personal no quiere separar.',0,'La escena dice que el personal separa cartón algunos días; falta saber qué se lo dificulta.'],['Se pierde material aprovechable porque se mezcla o queda sin lugar definido.',1,'Es una lectura posible de lo que se describe.']]},
+{m:5,y:'mu',r:'cau',min:2,max:2,sc:IS,q:'2. Selecciona dos posibles causas.',o:[['Hay una sola caneca y poco espacio en la zona trasera.',1,'Plausible; faltaría saber si se podría reorganizar el espacio.'],['El vehículo recolector no pasa a una hora fija.',1,'Plausible: afecta cuánto tiempo permanecen las bolsas.'],['Separar el cartón depende de cada día, sin un acuerdo claro.',1,'Plausible: sin acuerdos, la separación no es constante.'],['La vecina exagera sus reclamos.',0,'No hay datos para afirmarlo; sus quejas podrían señalar un problema real.'],['El personal no sabe nada sobre residuos.',0,'Es una suposición; quizá sabe, pero no tiene las condiciones.']]},
+{m:5,y:'mu',r:'con',min:2,max:2,sc:IS,q:'3. Reconoce dos consecuencias que podrían presentarse.',o:[['Malos olores y posible presencia de moscas o roedores.',1,'Posible; la vecina ya menciona olores.'],['Pérdida de cartón y botellas que podrían aprovecharse.',1,'Posible si se mezclan con restos de comida o se deterioran.'],['Conflictos de convivencia con el vecindario.',1,'Ya hay un reclamo; podría crecer si no se atiende.'],['Una sanción para la panadería.',0,'No se sabe si hay incumplimientos; es mejor no presumirlo.']]},
+{m:5,y:'one',r:'mej',sc:IS,q:'4. Elige una posible mejora inicial.',o:[['Conversar con el personal y los vecinos para conocer sus dificultades y horarios.',1,'Entender antes de intervenir permite elegir mejoras más ajustadas.'],['Probar un lugar provisional y cubierto para el cartón y observar si ayuda.',1,'Es una acción pequeña y fácil de revisar.'],['Poner más recipientes de inmediato.',1,'Puede ayudar, pero conviene saber si hay espacio y qué materiales se acumulan.'],['Esperar a que el servicio pase más seguido.',1,'Depende de terceros; ¿qué se podría hacer desde el negocio?']]},
+{m:5,y:'tx',r:'preg',sc:IS,q:'5. Explica qué te gustaría conocer para comprender mejor la situación y por qué elegiste esa mejora.',f:['Mi justificación'],h:'Piensa: ¿qué dato cambiaría tu elección? ¿Qué opinarían las personas involucradas?'},
+{m:5,y:'tx',r:'ref',q:'Cierre reflexivo: responde con tus palabras.',f:['¿Qué situación te hizo pensar más?','¿Qué aspecto del manejo de residuos necesita más atención en tu entorno?','¿Qué te gustaría aprender para comprender mejor estos problemas?','¿Qué hábito cotidiano vale la pena revisar?'],h:'Completa al menos una respuesta.'}
+];
+const $=q=>document.querySelector(q),E=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const shuf=a=>{a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a};
+let i=-1,A={},SH={},msg='';
+const ans=k=>A[k]=A[k]||{sel:[],t:[],c:{},rev:0};
+/* Orden aleatorio por paso: se sortea al primer renderizado y se conserva al reseleccionar, para que las opciones no salten */
+const ord=k=>SH[k]=SH[k]||shuf(S[k].o.map((_,n)=>n));
+function pick(n){const s=S[i],a=ans(i),p=a.sel.indexOf(n);a.rev=0;
+ if(s.y==='one')a.sel=[n];else if(p>=0)a.sel.splice(p,1);
+ else if(s.max&&a.sel.length>=s.max){msg='Puedes elegir '+s.max+'. Quita una selección para cambiarla.';return render()}
+ else a.sel.push(n);msg='';render()}
+function mark(n,v){const a=ans(i);a.c[n]=v;a.rev=0;msg='';render()}
+function setT(n,v){ans(i).t[n]=v;upd()}
+function chk(k,nj){const s=S[k],a=ans(k),m=s.min||1;
+ if(s.y==='one'&&a.sel.length!==1)return'Elige una opción.';
+ if(s.y==='mu'&&a.sel.length<m)return m>1?'Elige '+m+' opciones.':'Elige al menos una opción.';
+ if(s.y==='cl'&&!s.o.every((_,n)=>a.c[n]))return'Clasifica todas las afirmaciones.';
+ if(s.y==='tx'&&!a.t.some(x=>(x||'').trim().length>2))return'Escribe tu respuesta para continuar.';
+ if(s.j&&!nj&&(a.t[0]||'').trim().length<3)return'Escribe una justificación breve para continuar.';
+ return''}
+function upd(){const c=S.filter((_,k)=>!chk(k)).length,p=Math.round(c/S.length*100);$('#pb').style.width=p+'%';
+ $('#pt').textContent=i<0?'Taller 3.1.2 · Reflexión inicial':i>=S.length?'Resumen · Progreso '+p+' %':'Paso '+(i+1)+' de '+S.length+' · Módulo '+(S[i].m+1)+' de 6 · Progreso '+p+' %'}
+function rv(){const e=chk(i,1);if(e){msg=e;return render()}ans(i).rev=1;msg='';render()}
+function next(){const e=chk(i);if(e){msg=e;return render()}msg='';i++;render();scrollTo(0,0)}
+function prev(){msg='';i--;render();scrollTo(0,0)}
+function reset(){i=-1;A={};SH={};msg='';render();scrollTo(0,0)}
+function render(){const app=$('#app');upd();
+ if(i<0){
+  app.innerHTML=`<section class="card"><span class="tag">Actividad 3.1.2 · Reflexión inicial</span><h1>¿Qué pasa con los residuos en nuestro entorno?</h1><p>Este taller explora situaciones cotidianas de generación y manejo de residuos sólidos en hogares, barrios, negocios e instituciones. Aquí no hay un examen: lo que importa es lo que observas, piensas y te preguntas.</p><ul><li>Recorrerás 6 módulos: observar, interpretar, explorar causas, anticipar consecuencias, comparar mejoras y resolver un reto.</li><li>Puedes cambiar tus respuestas y volver atrás en cualquier momento.</li><li>Muchas situaciones tienen varias lecturas razonables; los comentarios buscan hacerte pensar.</li><li>No se piden datos personales. Al final podrás tomar una captura de tu resumen como evidencia.</li></ul><button class="btn" onclick="i=0;render()">Comenzar el taller</button></section>`;return}
+ if(i>=S.length)return results();
+ const s=S[i],a=ans(i);
+ let b=`<section class="card"><span class="tag">Módulo ${s.m+1} · ${L[s.m]}</span><h3>${M[s.m]}</h3>`;
+ (s.sc||[]).forEach(x=>{const p=x.split('|');b+=`<div class="sc"><b>${p[0]}</b><p>${p[1]}</p></div>`});
+ if(s.b)b+=BINS;
+ b+=`<h2>${s.q}</h2>`;
+ if(s.max)b+=`<p class="hint">Debes elegir ${s.max} opciones.</p>`;
+ if(s.y==='one'||s.y==='mu')ord(i).forEach(n=>{const on=a.sel.includes(n);b+=`<button class="opt" aria-pressed="${on}" onclick="pick(${n})">${on?'☑':'☐'} ${s.o[n][0]}</button>`});
+ else if(s.y==='cl')ord(i).forEach(n=>{const c=a.c[n];b+=`<div class="cl"><p>${s.o[n][0]}</p><div class="row"><button class="opt" aria-pressed="${c==='v'}" onclick="mark(${n},'v')">${c==='v'?'●':'○'} 👁 Se observa</button><button class="opt" aria-pressed="${c==='s'}" onclick="mark(${n},'s')">${c==='s'?'●':'○'} 💭 Se supone</button></div></div>`});
+ else s.f.forEach((f,k)=>{b+=`<label for="t${k}">${f}</label><textarea id="t${k}" oninput="setT(${k},this.value)">${E(a.t[k]||'')}</textarea>`});
+ if(s.j)b+=`<label for="t0">Justifica brevemente tu elección</label><textarea id="t0" oninput="setT(0,this.value)">${E(a.t[0]||'')}</textarea>`;
+ if(s.y==='tx')b+=`<p class="hint">${s.h}</p>`;
+ else{b+=`<div class="row"><button class="btn s" onclick="rv()">Revisar respuesta</button></div>`;
+  if(a.rev){
+   if(s.y==='cl')ord(i).forEach(n=>{const o=s.o[n],g=a.c[n]===o[1];b+=`<div class="fb">${g?'✔':'↔'} <b>${o[0]}</b><br>${g?'Buena distinción. ':'Otra lectura posible: '}${o[2]}</div>`});
+   else a.sel.forEach(n=>{const o=s.o[n];b+=`<div class="fb">${o[1]?'💡 <b>Posibilidad razonable.</b>':'🔎 <b>Requiere más información.</b>'} ${o[2]}</div>`});
+   b+='<p class="hint">Puedes cambiar tu selección y volver a revisarla, o continuar.</p>'}}
+ b+=`<div class="nav"><button class="btn s" onclick="prev()">← ${i===0?'Inicio':'Anterior'}</button><span class="msg" role="alert">${msg}</span><button class="btn" onclick="next()">${i===S.length-1?'Ver mi resumen':'Continuar →'}</button></div></section>`;
+ app.innerHTML=b}
+function results(){
+ const R={},sc=new Set();['sit','cau','con','mej','preg','ref'].forEach(k=>R[k]={s:[],w:[]});
+ S.forEach((s,k)=>{if(chk(k))return;const a=A[k],r=R[s.r==='obs'?'sit':s.r];(s.sc||[]).forEach(x=>sc.add(x.split('|')[0]));
+  if(s.y==='cl')s.o.forEach((o,n)=>r.s.push((a.c[n]==='v'?'Lo clasifiqué como observado: ':'Lo clasifiqué como supuesto: ')+E(o[0])));
+  else if(s.y!=='tx')a.sel.forEach(n=>r.s.push(E(s.o[n][0])));
+  a.t.forEach((x,n)=>{if((x||'').trim())r.w.push((s.y==='tx'&&s.f.length>1?'<b>'+s.f[n]+'</b><br>':s.j?'<b>Mi justificación:</b><br>':'')+E(x.trim()).replace(/\n/g,'<br>'))})});
+ const T=[['sit','1. Situaciones que llamaron mi atención'],['cau','2. Posibles causas que identifiqué'],['con','3. Consecuencias que considero posibles'],['mej','4. Alternativas de mejora que propuse'],['preg','5. Preguntas que considero importantes'],['ref','6. Mi reflexión final']],done=S.filter((_,k)=>!chk(k)).length;
+ let h=`<section class="card res"><span class="tag">Actividad 3.1.2 · Reflexión inicial</span><h1>Taller: ¿Qué pasa con los residuos en nuestro entorno?</h1><div class="stats"><div><b>${sc.size}</b>situaciones exploradas</div><div><b>${done}/${S.length}</b>interacciones completadas</div><div><b>${Math.round(done/S.length*100)} %</b>de progreso</div></div><p class="hint">Este resumen recoge tus selecciones y lo que escribiste. Son tus interpretaciones, no una calificación ni conclusiones técnicas.</p>`;
+ T.forEach(t=>{const r=R[t[0]];if(!r.s.length&&!r.w.length)return;h+=`<h3>${t[1]}</h3>`;
+  if(r.s.length)h+=`<p class="hint">Opciones que seleccioné</p><ul>${r.s.map(x=>'<li>'+x+'</li>').join('')}</ul>`;
+  if(r.w.length)h+=`<p class="hint">Lo que escribí</p>`+r.w.map(x=>'<blockquote>'+x+'</blockquote>').join('')});
+ h+=`<div class="fb">Las situaciones relacionadas con los residuos sólidos no siempre tienen una única causa ni se resuelven de la misma manera. Observar lo que ocurre, escuchar diferentes perspectivas y reconocer las posibles consecuencias permite comprender mejor el problema y prepararse para aprender cómo actuar de forma responsable.</div><p>Siguiente paso: las próximas actividades de la guía profundizarán en los conocimientos y procedimientos para el manejo integral de residuos sólidos.</p><div class="nav"><button class="btn s" onclick="i=0;render();scrollTo(0,0)">Revisar mis respuestas</button><button class="btn" onclick="reset()">Reiniciar el taller</button></div></section>`;
+ $('#app').innerHTML=h}
+render();
+</script></body></html>
